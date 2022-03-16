@@ -1,0 +1,678 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>Dashboard </title>
+  <meta name="description" content="WebRTC Dashboard">
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" >
+  <link rel="prefetch" href="/canvas-designer.html">
+  <link rel="prefetch" href="/images/password-protected.png">
+
+  <script src="/js/jquery-3.3.1.slim.min.js"></script>
+  <script src="/js/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/RTCPeerConnectionEx.js"></script>
+  <script src="/js/adapter-latest.js"></script>
+  <script src="/js/socketio.js"></script>
+  <script src="/js/getStats.js"></script>
+
+<style type="text/css">
+html, body, section, ul, li, nav, a, h1, h2 {
+    padding: 0;
+    margin: 0;
+    outline: none;
+    text-shadow: none;
+    box-shadow: none;
+    border-radius: 0;
+    text-decoration: none;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 17px;
+    line-height: 1.5em;
+}
+
+header {
+  border-bottom: 1px solid #95d4e7;
+  height: 70px;
+}
+
+a {
+    color: #EC008C;
+}
+
+a:hover {
+    color: #671345;
+}
+
+.logo {
+    float: left;
+    margin-left: 20px;
+    display: block;
+    height: 55px;
+}
+
+.logo-text {
+    font-size: 24px;
+    display: inline-block;
+    margin-top: 15px;
+    margin-left: 9px;
+    font-weight: bold;
+    color: #0194ff;
+}
+
+section {
+  border-bottom: 1px solid #95d4e7;
+  padding: 5px 20px;
+}
+
+.table {
+  overflow: auto;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  border-left: 1px solid #eceeef;
+  border-bottom: 1px solid #eceeef;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #eceeef;
+  border-right: 1px solid #eceeef;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #eceeef;
+}
+
+.table tbody + tbody {
+  border-top: 2px solid #eceeef;
+}
+
+.table .table {
+  background-color: #fff;
+}
+
+.table-sm th,
+.table-sm td {
+  padding: 0.3rem;
+}
+
+.table-bordered {
+  border: 1px solid #eceeef;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #eceeef;
+}
+
+.table-bordered thead th,
+.table-bordered thead td {
+  border-bottom-width: 2px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-active,
+.table-active > th,
+.table-active > td {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-hover .table-active:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-hover .table-active:hover > td,
+.table-hover .table-active:hover > th {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-success,
+.table-success > th,
+.table-success > td {
+  background-color: #dff0d8;
+}
+
+.table-hover .table-success:hover {
+  background-color: #d0e9c6;
+}
+
+.table-hover .table-success:hover > td,
+.table-hover .table-success:hover > th {
+  background-color: #d0e9c6;
+}
+
+.table-info,
+.table-info > th,
+.table-info > td {
+  background-color: #d9edf7;
+}
+
+.table-hover .table-info:hover {
+  background-color: #c4e3f3;
+}
+
+.table-hover .table-info:hover > td,
+.table-hover .table-info:hover > th {
+  background-color: #c4e3f3;
+}
+
+.table-warning,
+.table-warning > th,
+.table-warning > td {
+  background-color: #fcf8e3;
+}
+
+.table-hover .table-warning:hover {
+  background-color: #faf2cc;
+}
+
+.table-hover .table-warning:hover > td,
+.table-hover .table-warning:hover > th {
+  background-color: #faf2cc;
+}
+
+.table-danger,
+.table-danger > th,
+.table-danger > td {
+  background-color: #f2dede;
+}
+
+.table-hover .table-danger:hover {
+  background-color: #ebcccc;
+}
+
+.table-hover .table-danger:hover > td,
+.table-hover .table-danger:hover > th {
+  background-color: #ebcccc;
+}
+
+.thead-inverse th {
+  color: #fff;
+  background-color: #292b2c;
+}
+
+.thead-default th {
+  color: #464a4c;
+  background-color: #eceeef;
+}
+
+.table-inverse {
+  color: #fff;
+  background-color: #292b2c;
+}
+
+.table-inverse th,
+.table-inverse td,
+.table-inverse thead th {
+  border-color: #fff;
+}
+
+.table-inverse.table-bordered {
+  border: 0;
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.table-responsive.table-bordered {
+  border: 0;
+}
+
+.clickable {
+  border-bottom: 1px dotted blue;
+  padding-bottom: 2px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.tab {
+  display: inline-block;
+  width: 20px;
+}
+
+header div .top-span, header div button {
+  display: inline-block!important;
+  margin-right: 25px;
+  padding: 2px 8px;
+  font-size: 14px;
+}
+
+#logs-viewer {
+  height: 400px;
+  overflow: auto;
+  padding: 0;
+  border: 0;
+}
+
+#logs-viewer tr:first-child td {
+  border-top: 0;
+}
+
+pre {
+  margin: 0;
+  padding: 0;
+}
+
+input[disabled], button[disabled] {
+  background: transparent!important;
+  color: #dcd7d7!important;
+  border: 1px solid #dcd7d7!important;
+  cursor: not-allowed!important;
+  text-shadow: none!important;
+  box-shadow: none!important;
+  text-decoration: none!important;
+  outline: none!important;
+}
+
+.max-width {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+</style>
+</head>
+<body>
+
+  <div style="float: left;margin-left: 35px;margin-top: 35px;">
+      <button class="btn btn-primary" data-toggle="modal" data-target="#startRoomModel">创建房间</button>
+      <button id="btn-show-join-hidden-room" class="btn btn-primary" data-toggle="modal" data-target="#joinRoomModel">加入房间</button>
+  </div>
+
+  <div class="modal fade" id="startRoomModel" tabindex="-1" role="dialog" aria-labelledby="startRoomModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="startRoomModelLabel">创建房间</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="padding-bottom: 0;">
+          <form>
+            <div class="form-group">
+              <p>
+                <label for="txt-roomid" class="col-form-label">房间ID:</label>
+                <input type="text" class="form-control" id="txt-roomid">
+              </p>
+
+              <p>
+                <label for="txt-user-name" class="col-form-label">你的妮称:</label>
+                <input type="text" class="form-control" id="txt-user-name">
+              </p>
+
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary" id="btn-create-room">创建</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="joinRoomModel" tabindex="-1" role="dialog" aria-labelledby="joinRoomModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="joinRoomModelLabel">加入房间</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <p>
+                <label for="txt-roomid-hidden" class="col-form-label">房间ID:</label>
+                <input type="text" class="form-control" id="txt-roomid-hidden">
+              </p>
+
+              <p>
+                <label for="txt-user-name-hidden" class="col-form-label">你的妮称:</label>
+                <input type="text" class="form-control" id="txt-user-name-hidden">
+              </p>
+
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary" id="btn-join-hidden-room">加入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirm-box-topper" style="display:none;z-index:99999999;top:0;left:0;bottom:0;right:0;width:100%;height:100%;position:fixed;background:#000000ad;"></div>
+  <div id="alert-box" class="modal fade" style="display:none;z-index:999999999999999;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="alert-title">提示</h5>
+                        <button type="button" class="close btn-alert-close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="alert-message" class="model-list"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <p id="alert-special"></p>
+                        <button class="btn btn-primary btn-alert-close">关闭</button>
+                    </div>
+                </div>
+            </div>
+  </div>
+
+  <div id="confirm-box" class="modal fade" style="display:none;z-index:999999999999999;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirm-title">请确认</h5>
+                        <button type="button" class="close btn-confirm-close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="confirm-message" class="modal-body"></div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-confirm-close" id="btn-confirm-close">取消</button>
+                        <button class="btn btn-primary" id="btn-confirm-action">确定</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+<script>
+
+var publicRoomIdentifier = 'dashboard';
+var connection = new RTCPeerConnectionEx();
+connection.socketURL = '/';
+connection.publicRoomIdentifier = publicRoomIdentifier;
+connection.socketMessageEvent = publicRoomIdentifier;
+// keep room opened even if owner leaves
+connection.autoCloseEntireSession = true;
+
+connection.connectSocket(function(socket) {
+
+    socket.on('disconnect', function() {
+        location.reload();
+    });
+});
+
+connection.onPeerStateChanged = function(event) {
+  if(event.iceConnectionState === 'connected' && event.signalingState === 'stable') {
+	if(connection.peers[event.userid].gettingStats === true) {
+	  return;
+	}
+	connection.peers[event.userid].gettingStats = true; 
+
+	var peer = connection.peers[event.userid].peer;
+	var interval = 1000;
+
+	if(DetectRTC.browser.name === 'Firefox') {
+	  getStats(peer, peer.getLocalStreams()[0].getTracks()[0], function(stats) {
+		onGettingWebRTCStats(stats, event.userid);
+	  }, interval);
+	}
+	else {
+	  getStats(peer, function(stats) {
+		onGettingWebRTCStats(stats, event.userid);
+	  }, interval);
+	}
+  }
+};
+
+function onGettingWebRTCStats(stats, remoteUserId) {
+	if(!connection.peers[remoteUserId]) {
+		stats.nomore();
+	}
+
+	if(stats.connectionType.remote.candidateType.indexOf('relayed') !== -1) {
+		stats.connectionType.remote.candidateType = 'TURN';
+	}
+	else {
+		stats.connectionType.remote.candidateType = 'STUN';
+	}
+
+	if(stats.connectionType.local.candidateType.indexOf('relayed') !== -1) {
+		stats.connectionType.local.candidateType = 'TURN';
+	}
+	else {
+		stats.connectionType.local.candidateType = 'STUN';
+	}
+	
+	var statsData = 'UserID: ' + remoteUserId + '\n';
+	statsData += 'ICE(remoteIceType, localIceType): ' + stats.connectionType.remote.candidateType + ', ' + stats.connectionType.local.candidateType;
+	statsData += '\n';
+	statsData += 'ExternalIPAddress(remote, local): ' + stats.connectionType.remote.ipAddress + ', ' + stats.connectionType.local.ipAddress;
+	statsData += '\n';
+	statsData += 'Transport(remote, local): ' + stats.connectionType.remote.transport + ', ' + stats.connectionType.local.transport;
+	statsData += '\n';
+	
+	statsData += 'Encryption: ' + stats.encryption;
+	statsData += '\n';
+	statsData += 'videoResolutionsForSenders: ' + stats.resolutions.send.width + 'x' + stats.resolutions.send.height;
+	statsData += '\n';
+	statsData += 'videoResolutionsForReceivers: ' + stats.resolutions.recv.width + 'x' + stats.resolutions.recv.height;
+	statsData += '\n';
+	statsData += 'codecsSend: ' + stats.audio.send.codecs.concat(stats.video.send.codecs).join(', ');
+	statsData += '\n';
+	statsData += 'codecsRecv: ' + stats.audio.recv.codecs.concat(stats.video.recv.codecs).join(', ');
+	statsData += '\n';
+	statsData += 'totalDataForSenders(Audio + Video): ' + bytesToSize(stats.audio.bytesSent + stats.video.bytesSent);
+	statsData += '\n';
+	statsData += 'totalDataForReceivers(Audio + Video): ' + bytesToSize(stats.audio.bytesReceived + stats.video.bytesReceived);
+	statsData += '\n';
+	
+	statsData += 'Bandwidth: ' + bytesToSize(stats.bandwidth.speed);
+	statsData += '\n';
+	statsData += 'framerateMean: ' + bytesToSize(stats.video.send.framerateMean);
+	statsData += '\n';
+	statsData += 'bitrateMean: ' + bytesToSize(stats.video.send.bitrateMean);
+	statsData += '\n';
+	
+	statsData += 'audio-latency: ' + stats.audio.latency + 'ms';
+	statsData += '\n';
+	statsData += 'video-latency: ' + stats.video.latency + 'ms';
+	statsData += '\n';
+
+	statsData += 'audio-packetsLost: ' + stats.audio.packetsLost;
+	statsData += '\n';
+	statsData += 'video-packetsLost: ' + stats.video.packetsLost;
+	statsData += '\n';
+	
+	console.log('statsData = ' + statsData);
+}
+
+function bytesToSize(bytes) {
+	var k = 1000;
+	var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+	if (bytes === 0) {
+		return '0 Bytes';
+	}
+	var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
+	return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+}
+
+$('#btn-join-hidden-room').click(function() {
+    var roomid = $('#txt-roomid-hidden').val().toString();
+    if (!roomid || !roomid.replace(/ /g, '').length) {
+        alertBox('请输入房间ID.', '房间ID为空');
+        return;
+    }
+
+    var fullName = $('#txt-user-name-hidden').val().toString();
+    if (!fullName || !fullName.replace(/ /g, '').length) {
+        alertBox('请输入你的妮称.', '妮称为空');
+        return;
+    }
+
+    connection.extra.userFullName = fullName;
+    joinAHiddenRoom(roomid);
+});
+
+function joinAHiddenRoom(roomid) {
+    var initialHTML = $('#btn-join-hidden-room').html();
+
+    $('#btn-join-hidden-room').html('请稍等...').prop('disabled', true);
+
+    connection.checkPresence(roomid, function(isRoomExist) {
+        if (isRoomExist === false) {
+            alertBox('不存在该房间ID: ' + roomid, '房间没有发现');
+            $('#btn-join-hidden-room').html(initialHTML).prop('disabled', false);
+            return;
+        }
+
+        connection.sessionid = roomid;
+        connection.isInitiator = false;
+        $('#joinRoomModel').modal('hide');
+        openCanvasDesigner();
+
+        $('#btn-join-hidden-room').html(initialHTML).prop('disabled', false);
+    })
+}
+
+function openCanvasDesigner() {
+    $('#startRoomModel').modal('hide');
+    var href = location.href + 'canvas-designer.html?open=' + connection.isInitiator + '&sessionid=' + connection.sessionid + '&publicRoomIdentifier=' + connection.publicRoomIdentifier + '&userFullName=' + connection.extra.userFullName;
+
+    var newWin = window.open(href);
+    if (!newWin || newWin.closed || typeof newWin.closed == 'undefined') {
+        console.log("canvas-designer.html popup window is blocked!");
+    }
+}
+
+function alertBox(message, title, specialMessage, callback) {
+    callback = callback || function() {};
+
+    $('.btn-alert-close').unbind('click').bind('click', function(e) {
+        e.preventDefault();
+        $('#alert-box').modal('hide');
+        $('#confirm-box-topper').hide();
+
+        callback();
+    });
+
+    $('#alert-title').html(title || 'Alert');
+    $('#alert-special').html(specialMessage || '');
+    $('#alert-message').html(message);
+    $('#confirm-box-topper').show();
+
+    $('#alert-box').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+}
+
+function confirmBox(message, callback) {
+    $('#btn-confirm-action').html('Confirm').unbind('click').bind('click', function(e) {
+        e.preventDefault();
+        $('#confirm-box').modal('hide');
+        $('#confirm-box-topper').hide();
+        callback(true);
+    });
+
+    $('#btn-confirm-close').html('Cancel');
+
+    $('.btn-confirm-close').unbind('click').bind('click', function(e) {
+        e.preventDefault();
+        $('#confirm-box').modal('hide');
+        $('#confirm-box-topper').hide();
+        callback(false);
+    });
+
+    $('#confirm-message').html(message);
+    $('#confirm-title').html('Please Confirm');
+    $('#confirm-box-topper').show();
+
+    $('#confirm-box').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+}
+
+$('#btn-create-room').click(function() {
+    var roomid = $('#txt-roomid').val().toString();
+    if (!roomid || !roomid.replace(/ /g, '').length) {
+        alertBox('请输入房间ID.', '房间ID为空');
+        return;
+    }
+
+    var fullName = $('#txt-user-name').val().toString();
+    if (!fullName || !fullName.replace(/ /g, '').length) {
+        alertBox('请输入你的妮称.', '妮称为空');
+        return;
+    }
+
+    connection.extra.userFullName = fullName;    
+
+    var initialHTML = $('#btn-create-room').html();
+
+    $('#btn-create-room').html('请稍等...').prop('disabled', true);
+
+    connection.checkPresence(roomid, function(isRoomExist) {
+        if (isRoomExist === true) {
+            alertBox('该房间ID已经存在，请加入它.', '房间ID已使用');
+            return;
+        }
+
+        if ($('#chk-hidden-room').prop('checked') === true) {
+            connection.publicRoomIdentifier = '';
+        }
+
+        connection.sessionid = roomid;
+        connection.isInitiator = true;
+        openCanvasDesigner();
+        $('#btn-create-room').html(initialHTML).prop('disabled', false);
+    });
+});
+
+var txtRoomId = document.getElementById('txt-roomid');
+
+txtRoomId.onkeyup = txtRoomId.onblur = txtRoomId.oninput = txtRoomId.onpaste = function() {
+    localStorage.setItem('canvas-designer-roomid', txtRoomId.value);
+};
+
+if (localStorage.getItem('canvas-designer-roomid')) {
+    txtRoomId.value = localStorage.getItem('canvas-designer-roomid');
+    $('#txt-roomid-hidden').val(txtRoomId.value);
+}
+
+var userFullName = document.getElementById('txt-user-name');
+
+userFullName.onkeyup = userFullName.onblur = userFullName.oninput = userFullName.onpaste = function() {
+    localStorage.setItem('canvas-designer-user-full-name', userFullName.value);
+};
+
+if (localStorage.getItem('canvas-designer-user-full-name')) {
+    userFullName.value = localStorage.getItem('canvas-designer-user-full-name');
+    $('#txt-user-name-hidden').val(userFullName.value);
+}
+</script>
+</body>
+</html>
